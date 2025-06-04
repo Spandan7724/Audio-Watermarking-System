@@ -79,7 +79,7 @@ audio_watermarking_pbl2/
 - **UV**: Python package manager (recommended)
 - **CUDA**: Optional, for GPU acceleration
 
-## 🚀Installation
+## Installation
 
 ### 1. Clone the Repository
 ```bash
