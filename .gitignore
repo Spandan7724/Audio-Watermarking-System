@@ -1,0 +1,13 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+.env
+.venv/
+
+# Node artifacts
+frontend/node_modules/
+
+# OS files
+.DS_Store

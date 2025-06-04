@@ -53,7 +53,12 @@ async def embed(file: UploadFile = File(...)):
         wav = wav.to(device)
 
         wm, delta = embed_audio(wav.unsqueeze(0), settings.message_bits)
-        torchaudio.save(tmp_out, wm.squeeze(0).cpu(), settings.sample_rate)
+        torchaudio.save(
+            tmp_out,
+            wm.squeeze(0).cpu(),
+            settings.sample_rate,
+            bits_per_sample=16,  # match folder embed output
+        )
 
         rms = float(torch.sqrt((delta**2).mean()).item())
         si = compute_si_snr(wav.unsqueeze(0), wm)
@@ -170,10 +175,14 @@ async def embed_folder(
 
     # 3️⃣ schedule deletion of out_dir ten minutes from now
     def delayed_delete(path: str, seconds: int = 600):
+        """Delete files or directories after a delay."""
         time.sleep(seconds)
-        if os.path.exists(path):
+        if os.path.isdir(path):
             shutil.rmtree(path, ignore_errors=True)
+        elif os.path.exists(path):
+            os.remove(path)
 
     background_tasks.add_task(delayed_delete, out_dir, 600)
+    background_tasks.add_task(delayed_delete, zip_path, 600)
 
     return BatchEmbedResponse(results=results, zip_download_url=zip_url)
